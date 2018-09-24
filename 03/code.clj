@@ -753,3 +753,28 @@ failed-protagonist-names
 
 (mapset inc [1 1 2 2])
 ; => #{2 3}
+
+
+(defn matching-i-part
+  [i part]
+  {:name (clojure.string/replace (:name part) #"^left-" (str "left-" i "-"))
+   :size (:size part)})
+
+(defn loop-x-part
+  [x part]
+  (loop [iteration 0
+         parts []]
+    (if (> iteration x)
+      parts
+      (recur (inc iteration) (into parts (matching-i-part iteration part)))))
+  )
+
+(defn best-symmetrize-body-parts
+  "Expects a seq of maps that have a :name and :size"
+  [x asym-body-parts]
+  (reduce (fn [final-body-parts part]
+            (into final-body-parts (set (into (loop-x-part x part) part))))
+          []
+          asym-body-parts))
+
+(best-symmetrize-body-parts 5 asym-hobbit-body-parts)
